@@ -1,55 +1,55 @@
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
-# Start XDG autostart .desktop files using dex. See also
-# https://wiki.archlinux.org/index.php/XDG_Autostart
-# The combination of xss-lock, nm-applet and pactl is a popular choice, so
-# they are included here as an example. Modify as you see fit.
-# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
-# screen before suspend. Use loginctl lock-session to lock your screen.
-# NetworkManager is the most popular way to manage wireless networks on Linux,
-# and nm-applet is a desktop environment-independent system tray GUI for it.
-
-
 
 #EXECUTABLE
 
-exec_always --no-startup-id ~/.fehbg
+
 exec        --no-startup-id pulseaudio
 exec        --no-startup-id setxkbmap -model pc105 -layout us,ru -option grp:win_space_toggle
 #exec       --no-startup-id nm-applet
 #exec       --no-startup-id dex --autostart --environment i3
 #exec       --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+exec_always --no-startup-id ~/.fehbg
 
 
-set $dmenu exec --no-startup-id dmenu_run -nf '#929292' -nb '#000000' -sb '#929292' -sf '#000000' -fn 'monospace-18' -p 'run:'
+#VARIABLES
+
+
+set $refresh_i3status killall -SIGUSR1 i3status
+set $dmenu  dmenu_run -nf '#929292' -nb '#000000' -sb '#929292' -sf '#000000' -fn 'DejaVu Sans Mono -16' -p 'run:'
+set $scrot scrot $HOME/Pictures/screenshots/'%d-%m-%y-$wx$h.png' -e 'optipng $f'
+#set $scrot scrot -s $HOME/Pictures/screenshots/'%d-%m-%y-$wx$h.png' -f -l style=dash,width=1,color=cyan,mode=edge -e 'optipng $f'
+
 
 #COLORS
 
+
 set $black      #000000
 set $whight     #eeeeee
-set $grey       #929292
-set $dark-grey  #727272
+set $grey       #4c4c4c
+set $dark-grey  #262626
 set $blue       #7896ba
 set $dark-blue  #4b6983
 set $red        #b14e3e
 
 set $mod                    Mod4
-font pango:                 DejaVu Sans Mono 18
+font pango:                 DejaVu Sans Mono 16
 for_window [class="^.*"]    border pixel 5 
 
 #class                      border  bg.    fg.
 
-client.focused              $grey   $grey  $grey
-client.unfocused            $black  $black $black
-client.focused_inactive     $black  $black $black
-client.urgent               $black  $black $black 
+client.focused              $dark-grey  $dark-grey  $dark-grey
+client.unfocused            $black      $black      $black
+client.focused_inactive     $black      $black      $black
+client.urgent               $red        $red        $red 
 
 bar {
+    font pango:             DejaVu Sans Mono 16
     status_command          i3status
     position                top
     separator_symbol        " "
     colors {
         background          $black
-        statusline          $grey
+        statusline          #848484
         focused_workspace   $black $grey  $black
         inactive_workspace  $black $black $grey
         urgent_workspace    $black $red   $black
@@ -57,22 +57,23 @@ bar {
 }
 
 
-
 #BYNDINGS and  WINDOWS 
-set $refresh_i3status killall -SIGUSR1 i3status
+
+
+floating_modifier $mod
+# bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh # toggle touchpad
+bindsym XF86MonBrightnessUp     exec xbacklight +1 
+bindsym XF86MonBrightnessDown   exec xbacklight -1
+
+bindsym $mod+Return             exec urxvt
+bindsym $mod+Shift+e            exec "i3-msg exit"
+bindsym $mod+d                  exec --no-startup-id $dmenu
+bindsym Print                   exec --no-startup-id $scrot  
+
 bindsym XF86AudioRaiseVolume    exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
 bindsym XF86AudioLowerVolume    exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
 bindsym XF86AudioMute           exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute        exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
-
-bindsym XF86MonBrightnessUp     exec xbacklight +1 
-bindsym XF86MonBrightnessDown   exec xbacklight -1
-
-floating_modifier $mod
-
-bindsym $mod+Return exec terminator
-bindsym $mod+Shift+q kill
-bindsym $mod+d $dmenu
 
 bindsym $mod+j focus left
 bindsym $mod+k focus down
@@ -140,7 +141,7 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
-bindsym $mod+Shift+e exec "i3-msg exit"
+bindsym $mod+Shift+q kill
 
 mode "resize" {
     bindsym j               resize shrink width 10 px or 10 ppt
@@ -171,3 +172,17 @@ for_window [window_type="menu"]                 floating enable
 
 assign [class="firefox"]    $ws3
 assign [class="filezilla"]  $ws4
+
+
+#COMMENTS
+
+
+# Start XDG autostart .desktop files using dex. See also
+# https://wiki.archlinux.org/index.php/XDG_Autostart
+# The combination of xss-lock, nm-applet and pactl is a popular choice, so
+# they are included here as an example. Modify as you see fit.
+# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
+# screen before suspend. Use loginctl lock-session to lock your screen.
+# NetworkManager is the most popular way to manage wireless networks on Linux,
+# and nm-applet is a desktop environment-independent system tray GUI for it.
+

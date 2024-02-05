@@ -8,9 +8,7 @@
 syntax enable
 set background=dark
 
-""colorscheme darkblue 
-""colorscheme grey_matrix
-colorscheme base16-apathy
+colorscheme grey-matrix
 
 set termguicolors
 set relativenumber
