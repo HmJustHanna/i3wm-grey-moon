@@ -11,7 +11,6 @@ general {
     color_good =        "#00ff00"
     color_bad =         "#cd00cd"
     color_degraded =    "#929292"
-
     interval =          5
     output_format =     i3bar
     separator =         false
@@ -20,10 +19,11 @@ general {
 
 #order += "disk /"
 order += "tztime localtime"
-order += "volume master"
+order += "tztime localdate"
+order += "battery 0"
 order += "wireless _first_"
 order += "ethernet _first_"
-order += "battery 0"
+order += "volume master"
 order += "cpu_temperature 1"
 order += "cpu_usage"
 #order += "ipv6"
@@ -41,48 +41,49 @@ ipv6
 
 cpu_temperature 1
 {
-    format = "CPU:%degrees°C"
+    format = " %degrees°C"
+        max_threshold = 40
         path = "/sys/class/thermal/thermal_zone2/temp"
 }
 
 cpu_temperature 2
 {
-    format = "CPU: %degrees°C "
+    format = " %degrees°C"
         path = "/sys/class/drm/card0/device/hwmon/hwmon1/temp1_input"
 }
 
 wireless _first_ {
-    format_up =" W:%quality"
-        format_down = "W:"
+    format_up =" %quality at %essid"
+        format_down = " "
 }
 
 ethernet _first_ {
 
 # if you use %speed, i3status requires root privileges
-    format_up = "E:%interface"
-        format_down = "E:"
+    format_up = " %interface"
+        format_down = ""
 }
 
 
 ethernet enp7s0 {
 # if you use %speed, i3status requires root privileges
-    format_up = "%interface %ip (%speed)"
-        format_down = "%interface"
+    format_up = " %interface %ip (%speed)"
+        format_down = ""
 }
 
 
 battery 0 {
     path = "/sys/class/power_supply/BAT1/uevent"
-    last_full_capacity = true
+    last_full_capacity = false
     integer_battery_capacity = true
-    low_threshold = 10
+    low_threshold = 60
     threshold_type = time
         format = "%status %percentage (%remaining)"
         format_down = "No battery"
-        status_chr = "CHR:"
-        status_bat = "BAT:"
-        status_unk = "???"
-        status_full = ""
+        status_chr = ""
+        status_bat = "battery"
+        status_unk = "?"
+        status_full = ""
 }
 
 run_watch DHCP {
@@ -106,12 +107,12 @@ run_watch VPN {
 }
 tztime localtime {
     format = "<span foreground='#00ff00'>%time</span>"
-        format_time = "%H:%M"
+        format_time = " %H:%M"
         timezone = "Europe/Minsk"
 } 
 
 tztime localdate {
-    format = "%d/%m/%Y"
+    format = " %d/%m/%Y"
 }
 
 # load {
@@ -125,12 +126,13 @@ disk "/" {
 
 volume master {
 
-    format = "V:%volume"
-        format_muted = "(%volume)"
+    format = " %volume"
+        format_muted = " (%volume)"
         device = "pulse:0"
 }
 
 cpu_usage {
-    format = "%usage"
+    format = " %usage"
+    max_threshold = 80
 }
 
